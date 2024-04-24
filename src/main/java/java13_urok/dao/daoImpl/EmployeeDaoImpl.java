@@ -54,7 +54,6 @@ public class EmployeeDaoImpl implements EmployeeDao {
     try (Statement statement = connection.createStatement()){
         statement.executeUpdate(sql);
         System.out.println("Table successfully deleted!");
-
     }catch (SQLException e){
         System.out.println(e.getMessage());
          }
@@ -74,26 +73,23 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public void updateEmployee(Long id, Employee employee) {
-        String sql = """
-                update employees set
-                first_name = ?,
-                full_name = ?,
-                age = ?,
-                email = ?,
-                job_Id =?
-                """;
-        try {
-            PreparedStatement preparedStatement  = connection.prepareStatement(sql);
+        String query = """
+        update employees set first_name=?,last_name=?,age=?,email=?,job_id=? where id=?;
+        """;
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1,employee.getFirstName());
             preparedStatement.setString(2,employee.getLastName());
             preparedStatement.setInt(3,employee.getAge());
             preparedStatement.setString(4,employee.getEmail());
             preparedStatement.setInt(5,employee.getJobId());
-
+            preparedStatement.setLong(6,id);
+            int i = preparedStatement.executeUpdate();
+            if (i > 0) {
+                System.out.println("Successfully updated");
+            }else System.out.println("Not found with id ");
         }catch (SQLException e){
             System.out.println(e.getMessage());
         }
-
     }
 
     @Override
@@ -171,23 +167,25 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
     @Override
     public List<Employee> getEmployeeByPosition(String position) {
+        List<Employee> employees = new ArrayList<>();
+        String sql = """
+             select * from employees e 
+            inner join jobs j on e.job_id = j.id where j.position = ? """;
 
-        List<Employee > employees = new ArrayList<>();
-        String sql="select * from employees e inner join jobs j on j.id=e.job_id where j.position=?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){
-            preparedStatement.setString(1,position);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, position);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 Employee employee = new Employee();
                 employee.setId(resultSet.getLong("id"));
                 employee.setFirstName(resultSet.getString("first_name"));
-                employee.setFirstName(resultSet.getString("last_name"));
+                employee.setLastName(resultSet.getString("last_name"));
                 employee.setAge(resultSet.getInt("age"));
-                employee.setFirstName(resultSet.getString("email"));
+                employee.setEmail(resultSet.getString("email"));
                 employee.setJobId(resultSet.getInt("job_id"));
                 employees.add(employee);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return employees;

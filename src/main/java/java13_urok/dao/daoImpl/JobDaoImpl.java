@@ -75,24 +75,34 @@ public class JobDaoImpl implements JobDao {
 
     @Override
     public List<Job> sortByExperience(String ascOrDesc) {
-        List<Job> jobs = new ArrayList<>();
-        String sql = "select * from jobs order by experience ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){
-            preparedStatement.setString(1,ascOrDesc);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
-                Job job = new Job();
-                job.setId(resultSet.getLong("Id"));
-                job.setPosition(resultSet.getString("position"));
-                job.setProfession(resultSet.getString("profession"));
-                job.setDescription(resultSet.getString("description"));
-                job.setExperience(resultSet.getInt("experience"));
-                jobs.add(job);
-            }
-        }catch (SQLException e){
-            System.out.println(e.getMessage());
+        List<Job> jobList = new ArrayList<>();
+        String sql = null;
+        if (ascOrDesc.equalsIgnoreCase("asc")){
+            sql = """
+                select * from jobs j order by j.experience;
+                """;
+        }else if (ascOrDesc.equalsIgnoreCase("desc")) {
+            sql =
+                    """
+                     select * from jobs j order by j.experience desc;
+                """;
         }
-        return jobs;
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (!resultSet.next()) {
+                throw new RuntimeException("NOT");
+            }
+            Job job = new Job();
+            job.setId(resultSet.getLong("id"));
+            job.setPosition(resultSet.getString("position"));
+            job.setProfession(resultSet.getString("profession"));
+            job.setDescription(resultSet.getString("description"));
+            job.setExperience(resultSet.getInt("experience"));
+            jobList.add(job);
+            return jobList;
+        }catch (SQLException e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
@@ -117,10 +127,13 @@ public class JobDaoImpl implements JobDao {
     @Override
     public void deleteDescriptionColumn() {
         String sql = "alter table jobs drop column description";
-        try (Connection connection = DriverManager.getConnection(sql)){
-                Statement statement = connection.createStatement();
-                statement.executeUpdate(sql);
-            System.out.println("Description column deleted successfully.");
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+            int deleteAuthor = preparedStatement.executeUpdate();
+            if (deleteAuthor > 0) {
+                System.out.println("successfully deleted");
+            } else {
+                System.out.println("column not found");
+            }
         }
         catch (SQLException e){
             System.out.println(e.getMessage());

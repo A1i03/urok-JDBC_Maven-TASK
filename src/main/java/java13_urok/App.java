@@ -11,6 +11,8 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Scanner scanner1 = new Scanner(System.in);
         EmployeeService employeeService = new EmployeeServiceImpl();
         JobService jobService = new JobServiceImpl();
         while (true) {
@@ -24,29 +26,40 @@ public class App {
                 case 2 -> {
                     boolean exit = true;
                     while (exit) {
-                            System.out.println("Команданы танданыз: ");
-                            System.out.println("""
-                                    1.createEmployee
-                                    2.addEmployee
-                                    3.dropTable
-                                    4.cleanTable
-                                    5.updateEmployee
-                                    6.getAllEmployees
-                                    7.findByEmail
-                                    8.getEmployeeById
-                                    9.getEmployeeByPosition
-                                    10.exit
-                                    """);
+                        System.out.println("Команданы танданыз: ");
+                        System.out.println("""
+                                1.createEmployee
+                                2.addEmployee
+                                3.dropTable
+                                4.cleanTable
+                                5.updateEmployee
+                                6.getAllEmployees
+                                7.findByEmail
+                                8.getEmployeeById
+                                9.getEmployeeByPosition
+                                10.exit
+                                """);
                         switch (new Scanner(System.in).nextInt()) {
                             case 1 -> {
                                 System.out.println("Create table :");
                                 employeeService.createEmployee();
                             }
                             case 2 -> {
+
                                 System.out.println("add Employee: ");
-                                employeeService.addEmployee(new Employee("Kaldarbekov", "Sultanali", 21,"ali@gmail.com", 2));
-                                employeeService.addEmployee(new Employee("Tinatin", "Tinatin", 20,"iam_tina@gmail.com", 1));
-                                employeeService.addEmployee(new Employee("Islam", "Kalyiuulu", 18,"isa@gmail.com", 3));
+
+                                Employee employee = new Employee();
+                                System.out.println("Write firstName: ");
+                                employee.setFirstName(new Scanner(System.in).nextLine());
+                                System.out.println("Write lastName:  ");
+                                employee.setLastName(new Scanner(System.in).nextLine());
+                                System.out.println("Write age: ");
+                                employee.setAge(new Scanner(System.in).nextInt());
+                                System.out.println("Write email: ");
+                                employee.setEmail(new Scanner(System.in).nextLine());
+                                System.out.println("Write jobId: ");
+                                employee.setJobId(new Scanner(System.in).nextInt());
+                                employeeService.addEmployee(employee);
                             }
                             case 3 -> {
                                 System.out.println("drop Table: ");
@@ -58,7 +71,20 @@ public class App {
                             }
                             case 5 -> {
                                 System.out.println("update Employee :");
-                               // employeeService.updateEmployee();
+                                System.out.println("Write Id: ");
+                                Long num = new Scanner(System.in).nextLong();
+                                Employee employee = new Employee();
+                                System.out.println("Write firstName: ");
+                                employee.setFirstName(new Scanner(System.in).nextLine());
+                                System.out.println("Write lastName:  ");
+                                employee.setLastName(new Scanner(System.in).nextLine());
+                                System.out.println("Write age: ");
+                                employee.setAge(new Scanner(System.in).nextInt());
+                                System.out.println("Write email: ");
+                                employee.setEmail(new Scanner(System.in).nextLine());
+                                System.out.println("Write jobId: ");
+                                employee.setJobId(new Scanner(System.in).nextInt());
+                                employeeService.updateEmployee(num, employee);
                             }
                             case 6 -> {
                                 System.out.println("get All Employees :");
@@ -74,7 +100,7 @@ public class App {
                             }
                             case 9 -> {
                                 System.out.println("get EmployeeBy Position :");
-                                System.out.println(employeeService.getEmployeeByPosition(new Scanner(System.in).nextLine()));
+                                System.out.println(employeeService.getEmployeeByPosition("Management"));
                             }
                             case 10 -> exit = false;
                         }
@@ -82,17 +108,17 @@ public class App {
                 }
                 case 1 -> {
                     boolean Exit = true;
-                        while (Exit) {
-                            System.out.println("Команданы танданыз!!!");
-                            System.out.println("""
-                                    1.createJobTable
-                                    2.addJob
-                                    3.getJobById
-                                    4.sortByExperience
-                                    5.getJobByEmployeeId
-                                    6.deleteDescriptionColumn
-                                    7.Exit
-                                    """);
+                    while (Exit) {
+                        System.out.println("Команданы танданыз!!!");
+                        System.out.println("""
+                                1.createJobTable
+                                2.addJob
+                                3.getJobById
+                                4.sortByExperience
+                                5.getJobByEmployeeId
+                                6.deleteDescriptionColumn
+                                7.Exit
+                                """);
                         switch (new Scanner(System.in).nextInt()) {
                             case 1 -> {
                                 System.out.println("Create table :");
@@ -100,9 +126,17 @@ public class App {
                             }
                             case 2 -> {
                                 System.out.println("Add Job: ");
-                                jobService.addJob(new Job("Mentor", "Java" ,  "Backend developer", 3));
-                                jobService.addJob(new Job("Management", "JavaScript" ,  "Fronted developer", 1));
-                                jobService.addJob(new Job("Instructor", "Java" ,  "Backend developer", 2));
+                                Job job = new Job();
+                                System.out.println("Write position: ");
+                                job.setPosition(new Scanner(System.in).nextLine());
+                                System.out.println(" Write profession: ");
+                                job.setProfession(new Scanner(System.in).nextLine());
+                                System.out.println("Write description: ");
+                                job.setDescription(new Scanner(System.in).nextLine());
+                                System.out.println("Write experience: ");
+                                job.setExperience(new Scanner(System.in).nextInt());
+                                jobService.addJob(job);
+
                             }
                             case 3 -> {
                                 System.out.println("getJobById : ");
